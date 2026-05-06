@@ -1,10 +1,7 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://your-render-backend.onrender.com/api").replace(
-  /\/$/,
-  ""
-);
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "");
 
-if (API_BASE_URL.includes("your-render-backend.onrender.com")) {
-  console.warn("Set VITE_API_BASE_URL to your deployed Render backend before releasing the app.");
+if (!API_BASE_URL) {
+  throw new Error("VITE_API_BASE_URL is required. Set it to your deployed backend URL, including /api.");
 }
 
 const parseResponse = async (response) => {
