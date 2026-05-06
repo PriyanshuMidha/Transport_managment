@@ -14,9 +14,17 @@ const parseResponse = async (response) => {
   return payload;
 };
 
-const buildHeaders = () => ({
-  "Content-Type": "application/json",
-});
+const buildHeaders = (withBody = false) => {
+  const headers = {
+    Accept: "application/json",
+  };
+
+  if (withBody) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  return headers;
+};
 
 export const apiClient = {
   get: async (path) => {
@@ -28,7 +36,7 @@ export const apiClient = {
   post: async (path, body) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "POST",
-      headers: buildHeaders(),
+      headers: buildHeaders(true),
       body: JSON.stringify(body),
     });
 
@@ -37,7 +45,7 @@ export const apiClient = {
   patch: async (path, body = {}) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "PATCH",
-      headers: buildHeaders(),
+      headers: buildHeaders(true),
       body: JSON.stringify(body),
     });
 
