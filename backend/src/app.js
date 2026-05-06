@@ -15,20 +15,25 @@ export const createApp = () => {
     "https://localhost",
     "capacitor://localhost",
   ].filter(Boolean);
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
 
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-          return;
-        }
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-        callback(new Error(`CORS blocked origin: ${origin}`));
-      },
-      credentials: true,
-    })
-  );
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  };
+
+  app.use(cors(corsOptions));
+  app.options("*", cors(corsOptions));
   app.use(express.json());
   app.use(morgan("dev"));
 
