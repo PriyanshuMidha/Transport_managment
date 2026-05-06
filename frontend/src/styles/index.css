@@ -1,0 +1,535 @@
+:root {
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+  color: #10221f;
+  background:
+    radial-gradient(circle at top left, rgba(255, 212, 102, 0.35), transparent 22%),
+    linear-gradient(145deg, #f8f3e7 0%, #edf3ef 45%, #dbe8ea 100%);
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(16, 34, 31, 0.08);
+  --accent: #0e6b5c;
+  --accent-dark: #08463c;
+  --accent-soft: #dff4ed;
+  --warning: #d97706;
+  --danger: #b42318;
+  --danger-soft: rgba(180, 35, 24, 0.12);
+  --ink-soft: #5a6a67;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.app-shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 20px 32px;
+}
+
+.hero-card,
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: 0 18px 48px rgba(17, 37, 33, 0.08);
+}
+
+.hero-card {
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+
+.hero-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.hero-card h1,
+.section-heading h2,
+.supplier-group-heading h3,
+.modal-header h3 {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+.hero-card h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+  max-width: 680px;
+}
+
+.hero-copy,
+.section-copy,
+.modal-copy p {
+  color: var(--ink-soft);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-tab,
+.primary-button,
+.secondary-button,
+.ghost-button,
+.danger-button {
+  border-radius: 999px;
+  border: 0;
+  text-decoration: none;
+  transition: 160ms ease;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.nav-tab {
+  padding: 12px 18px;
+  background: rgba(14, 107, 92, 0.08);
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.nav-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.card {
+  padding: 18px;
+}
+
+.page-grid,
+.reports-grid,
+.report-groups {
+  display: grid;
+  gap: 14px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.field span {
+  font-weight: 700;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 34, 31, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.search-field {
+  flex: 1 1 320px;
+}
+
+.form-actions,
+.report-toolbar,
+.action-stack,
+.mobile-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 14px;
+}
+
+.report-header-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.report-header-tools {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.report-loading-text {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-actions {
+  justify-content: flex-end;
+}
+
+.primary-button,
+.secondary-button,
+.ghost-button,
+.danger-button {
+  padding: 12px 18px;
+  font-weight: 700;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: #fff;
+}
+
+.secondary-button {
+  background: rgba(14, 107, 92, 0.1);
+  color: var(--accent-dark);
+}
+
+.ghost-button {
+  background: transparent;
+  color: var(--accent-dark);
+}
+
+.danger-button {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.danger-button:hover,
+.nav-tab:hover {
+  transform: translateY(-1px);
+}
+
+.success-pill,
+.table-count,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.success-pill,
+.status-pill.opened {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.status-pill.stock {
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--warning);
+}
+
+.table-count {
+  background: rgba(16, 34, 31, 0.06);
+  color: var(--accent-dark);
+}
+
+.banner,
+.loading-card,
+.error-text,
+.empty-row,
+.empty-report-state {
+  font-weight: 600;
+}
+
+.error-banner,
+.error-text {
+  color: var(--danger);
+}
+
+.banner {
+  margin-bottom: 20px;
+}
+
+.report-card {
+  overflow: hidden;
+}
+
+.supplier-group {
+  display: grid;
+  gap: 10px;
+}
+
+.supplier-group-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(16, 34, 31, 0.08);
+}
+
+.supplier-group-heading span,
+.card-label {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.table-shell {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 11px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(16, 34, 31, 0.08);
+  white-space: nowrap;
+}
+
+th {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.empty-row,
+.empty-report-state {
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.empty-report-state {
+  padding: 18px 0 4px;
+}
+
+.desktop-report {
+  display: block;
+}
+
+.mobile-report {
+  display: none;
+}
+
+.report-card-item {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(16, 34, 31, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.report-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.report-card-grid strong {
+  display: block;
+  margin-top: 4px;
+  word-break: break-word;
+}
+
+.report-card-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 26, 24, 0.34);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 20;
+}
+
+.modal-card {
+  width: min(560px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(10, 26, 24, 0.24);
+}
+
+.modal-card-large {
+  width: min(860px, 100%);
+}
+
+.modal-card .parcel-form {
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.modal-copy {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.loading-card {
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .app-shell {
+    padding-inline: 16px;
+  }
+
+  .hero-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .nav-tabs {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 14px 12px 24px;
+  }
+
+  .hero-card,
+  .card,
+  .modal-card {
+    border-radius: 20px;
+  }
+
+  .section-heading,
+  .report-header,
+  .supplier-group-heading,
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .report-header-tools {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .form-grid,
+  .report-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .desktop-report {
+    display: none;
+  }
+
+  .mobile-report {
+    display: grid;
+    gap: 14px;
+  }
+
+  .nav-tab,
+  .primary-button,
+  .secondary-button,
+  .ghost-button,
+  .danger-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .action-stack {
+    width: 100%;
+  }
+
+  .table-count,
+  .report-loading-text {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 425px) {
+  .hero-card {
+    padding: 22px 18px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .modal-card {
+    padding: 18px;
+  }
+}
