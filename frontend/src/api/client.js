@@ -1,65 +1,55 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://your-render-backend.onrender.com/api").replace(
+  /\/$/,
+  ""
+);
 
-const getAuthToken = () => localStorage.getItem("authToken");
+if (API_BASE_URL.includes("your-render-backend.onrender.com")) {
+  console.warn("Set VITE_API_BASE_URL to your deployed Render backend before releasing the app.");
+}
 
 const parseResponse = async (response) => {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    if (response.status === 401) {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("authUser");
-    }
     throw new Error(payload?.message || "Something went wrong");
   }
 
   return payload;
 };
 
-const buildHeaders = (authenticated = true) => {
-  const headers = {
-    "Content-Type": "application/json",
-  };
-
-  if (authenticated) {
-    const token = getAuthToken();
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-  }
-
-  return headers;
-};
+const buildHeaders = () => ({
+  "Content-Type": "application/json",
+});
 
 export const apiClient = {
-  get: async (path, options = {}) => {
+  get: async (path) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: buildHeaders(options.authenticated !== false),
+      headers: buildHeaders(),
     });
     return parseResponse(response);
   },
-  post: async (path, body, options = {}) => {
+  post: async (path, body) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "POST",
-      headers: buildHeaders(options.authenticated !== false),
+      headers: buildHeaders(),
       body: JSON.stringify(body),
     });
 
     return parseResponse(response);
   },
-  patch: async (path, body = {}, options = {}) => {
+  patch: async (path, body = {}) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "PATCH",
-      headers: buildHeaders(options.authenticated !== false),
+      headers: buildHeaders(),
       body: JSON.stringify(body),
     });
 
     return parseResponse(response);
   },
-  delete: async (path, options = {}) => {
+  delete: async (path) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "DELETE",
-      headers: buildHeaders(options.authenticated !== false),
+      headers: buildHeaders(),
     });
 
     return parseResponse(response);

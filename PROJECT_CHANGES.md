@@ -37,7 +37,7 @@
   `isParcelOpened`, `openedDate`, `status`, `isDeleted`, `deletedAt`, `deletedBy`
 - Audit fields:
   `createdBy`, `updatedBy`, `createdAt`, `updatedAt`
-- Without active login, `deletedBy`, `createdBy`, and `updatedBy` remain `null`.
+- `deletedBy`, `createdBy`, and `updatedBy` remain `null` unless future user tracking is added.
 
 ## Report Behavior
 - In Stock Report shows:
@@ -48,7 +48,9 @@
 - Search uses debounced API updates and keeps the report mounted while results refresh, so typing does not reload the page or drop input focus.
 - Results are grouped supplier-wise in the frontend.
 - Desktop uses compact tables. Mobile uses compact cards with full-width controls.
+- Frontend API calls read `VITE_API_BASE_URL` and no longer fall back to a localhost backend.
+- Capacitor Android uses Vite `dist` assets from `frontend/android` with app id `com.priyanshu.transportmanagement`.
 
 ## Deferred Work
-- Login/JWT remains dormant in code for compatibility but is not part of the active app flow.
 - Backend MongoDB connection must come from `MONGO_URI`; localhost should only be used if intentionally provided in the environment.
+- Release builds still need the real Render backend URL set in `frontend/.env.production` or equivalent environment injection before generating the final APK.
