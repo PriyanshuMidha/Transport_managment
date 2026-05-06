@@ -1,24 +1,32 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
-import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import parcelRoutes from "./routes/parcelRoutes.js";
 import transportRoutes from "./routes/transportRoutes.js";
 
 export const createApp = () => {
   const app = express();
+  const allowedOrigins = [
+    process.env.CLIENT_ORIGIN,
+    "https://transport-management-frontend.onrender.com",
+    "http://localhost:5173",
+    "http://localhost",
+    "https://localhost",
+    "capacitor://localhost",
+  ].filter(Boolean);
 
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || env.clientOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true);
           return;
         }
 
-        callback(new Error(`Origin ${origin} is not allowed by CORS`));
+        callback(new Error(`CORS blocked origin: ${origin}`));
       },
+      credentials: true,
     })
   );
   app.use(express.json());
