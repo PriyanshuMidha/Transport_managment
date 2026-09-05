@@ -61,15 +61,15 @@ const parcelSchema = new mongoose.Schema(
       default: null,
     },
     deletedBy: {
-      type: mongoose.Schema.Types.Mixed,
+      type: String,
       default: null,
     },
     createdBy: {
-      type: mongoose.Schema.Types.Mixed,
+      type: String,
       default: null,
     },
     updatedBy: {
-      type: mongoose.Schema.Types.Mixed,
+      type: String,
       default: null,
     },
   },
@@ -77,5 +77,8 @@ const parcelSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+parcelSchema.index({ isDeleted: 1, status: 1, supplierName: 1, date: -1 });
+parcelSchema.index({ transportId: 1 });
 
 export const Parcel = mongoose.model("Parcel", parcelSchema);

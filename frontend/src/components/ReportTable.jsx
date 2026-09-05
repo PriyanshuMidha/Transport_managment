@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const formatDate = (value) => {
   if (!value) {
     return "-";
@@ -44,6 +46,11 @@ export const ReportTable = ({
   const groups = groupBySupplier(rows);
   const supplierNames = Object.keys(groups);
   const desktopColSpan = showOpenedDate ? 10 : 9;
+  const [expandedIds, setExpandedIds] = useState({});
+
+  const toggleExpanded = (id) => {
+    setExpandedIds((current) => ({ ...current, [id]: !current[id] }));
+  };
 
   return (
     <section className="card report-card">
@@ -129,53 +136,76 @@ export const ReportTable = ({
               </div>
 
               <div className="mobile-report">
-                {groups[supplierName].map((row) => (
-                  <article key={row._id} className="report-card-item">
-                    <div className="report-card-title">
-                      <strong>{row.supplierName}</strong>
-                      <span className={`status-pill ${row.status === "OPENED" ? "opened" : "stock"}`}>{row.status}</span>
-                    </div>
-                    <div className="report-card-grid">
-                      <div>
-                        <span className="card-label">Date</span>
-                        <strong>{formatDate(row.date)}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Supplier Name</span>
-                        <strong>{row.supplierName}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Receiver Name</span>
-                        <strong>{row.receiverName}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Transport Name</span>
-                        <strong>{row.transportId?.name || "-"}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Bill Number</span>
-                        <strong>{row.billNumber}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Builty Number</span>
-                        <strong>{row.builtyNumber}</strong>
-                      </div>
-                      <div>
-                        <span className="card-label">Lot Number</span>
-                        <strong>{row.lotNumber}</strong>
-                      </div>
-                      {showOpenedDate ? (
-                        <div>
-                          <span className="card-label">Opened Date</span>
-                          <strong>{formatDate(row.openedDate)}</strong>
+                {groups[supplierName].map((row) => {
+                  const isExpanded = Boolean(expandedIds[row._id]);
+
+                  return (
+                    <article key={row._id} className={`report-card-item ${isExpanded ? "expanded" : ""}`}>
+                      <button
+                        type="button"
+                        className="report-card-preview"
+                        onClick={() => toggleExpanded(row._id)}
+                        aria-expanded={isExpanded}
+                      >
+                        <div className="report-card-title">
+                          <strong>{row.supplierName}</strong>
+                          <span className={`status-pill ${row.status === "OPENED" ? "opened" : "stock"}`}>
+                            {row.status}
+                          </span>
                         </div>
+                        <div className="report-card-subline">
+                          <span>{formatDate(row.date)}</span>
+                          <span>{row.transportId?.name || "-"}</span>
+                          <span className="report-card-chevron">{isExpanded ? "Hide" : "View details"}</span>
+                        </div>
+                      </button>
+
+                      {isExpanded ? (
+                        <>
+                          <div className="report-card-grid">
+                            <div>
+                              <span className="card-label">Date</span>
+                              <strong>{formatDate(row.date)}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Supplier Name</span>
+                              <strong>{row.supplierName}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Receiver Name</span>
+                              <strong>{row.receiverName}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Transport Name</span>
+                              <strong>{row.transportId?.name || "-"}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Bill Number</span>
+                              <strong>{row.billNumber}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Builty Number</span>
+                              <strong>{row.builtyNumber}</strong>
+                            </div>
+                            <div>
+                              <span className="card-label">Lot Number</span>
+                              <strong>{row.lotNumber}</strong>
+                            </div>
+                            {showOpenedDate ? (
+                              <div>
+                                <span className="card-label">Opened Date</span>
+                                <strong>{formatDate(row.openedDate)}</strong>
+                              </div>
+                            ) : null}
+                          </div>
+                          <div className="action-stack mobile-actions">
+                            {actions.length > 0 ? actions.map((action) => renderActionButton(row, action)) : <span>-</span>}
+                          </div>
+                        </>
                       ) : null}
-                    </div>
-                    <div className="action-stack mobile-actions">
-                      {actions.length > 0 ? actions.map((action) => renderActionButton(row, action)) : <span>-</span>}
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </section>
           ))}

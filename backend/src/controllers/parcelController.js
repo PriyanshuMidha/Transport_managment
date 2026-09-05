@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { env } from "../config/env.js";
 import { Parcel } from "../models/Parcel.js";
@@ -19,34 +20,6 @@ const validateBasePayload = async ({
   builtyNumber,
   lotNumber,
 }) => {
-  if (!date) {
-    throw createError("Date is required", 400);
-  }
-
-  if (!supplierName?.trim()) {
-    throw createError("Supplier name is required", 400);
-  }
-
-  if (!receiverName?.trim()) {
-    throw createError("Receiver name is required", 400);
-  }
-
-  if (!transportId) {
-    throw createError("Transport name is required", 400);
-  }
-
-  if (!billNumber?.trim()) {
-    throw createError("Bill number is required", 400);
-  }
-
-  if (!builtyNumber?.trim()) {
-    throw createError("Builty number is required", 400);
-  }
-
-  if (!lotNumber?.trim()) {
-    throw createError("Lot number is required", 400);
-  }
-
   const transport = await Transport.findById(transportId);
 
   if (!transport) {
@@ -64,7 +37,7 @@ const validateBasePayload = async ({
   };
 };
 
-const formatCreatePayload = async (body) => {
+const formatCreatePayload = async (body, username) => {
   const payload = await validateBasePayload(body);
 
   return {
@@ -75,19 +48,11 @@ const formatCreatePayload = async (body) => {
     isDeleted: false,
     deletedAt: null,
     deletedBy: null,
+    createdBy: username,
   };
 };
 
-const formatEditPayload = async (body) => {
-  const disallowedFields = ["status", "openedDate", "isParcelOpened", "isDeleted", "deletedAt", "deletedBy"];
-  const attemptedRestrictedField = disallowedFields.find((field) => field in body);
-
-  if (attemptedRestrictedField) {
-    throw createError(`Field ${attemptedRestrictedField} cannot be edited`, 400);
-  }
-
-  return validateBasePayload(body);
-};
+const formatEditPayload = (body) => validateBasePayload(body);
 
 const buildReportQuery = (status, search = "") => {
   const query = {
@@ -108,7 +73,7 @@ const buildReportQuery = (status, search = "") => {
 };
 
 export const createParcel = asyncHandler(async (req, res) => {
-  const payload = await formatCreatePayload(req.body);
+  const payload = await formatCreatePayload(req.body, req.user.username);
   const parcel = await Parcel.create(payload);
   const populatedParcel = await Parcel.findById(parcel._id).populate(parcelPopulate);
 
@@ -116,14 +81,18 @@ export const createParcel = asyncHandler(async (req, res) => {
 });
 
 export const getParcels = asyncHandler(async (req, res) => {
-  const parcels = await Parcel.find({ isDeleted: false }).populate(parcelPopulate).sort({ supplierName: 1, date: -1 });
+  const parcels = await Parcel.find({ isDeleted: false })
+    .populate(parcelPopulate)
+    .sort({ supplierName: 1, date: -1 })
+    .lean();
   return sendSuccess(res, parcels, "Parcels fetched successfully");
 });
 
 export const getOpenedParcelsReport = asyncHandler(async (req, res) => {
   const parcels = await Parcel.find(buildReportQuery(PARCEL_STATUS.OPENED, req.query.search || ""))
     .populate(parcelPopulate)
-    .sort({ supplierName: 1, date: -1 });
+    .sort({ supplierName: 1, date: -1 })
+    .lean();
 
   return sendSuccess(res, parcels, "Opened report fetched successfully");
 });
@@ -131,7 +100,8 @@ export const getOpenedParcelsReport = asyncHandler(async (req, res) => {
 export const getInStockParcelsReport = asyncHandler(async (req, res) => {
   const parcels = await Parcel.find(buildReportQuery(PARCEL_STATUS.IN_STOCK, req.query.search || ""))
     .populate(parcelPopulate)
-    .sort({ supplierName: 1, date: -1 });
+    .sort({ supplierName: 1, date: -1 })
+    .lean();
 
   return sendSuccess(res, parcels, "In-stock report fetched successfully");
 });
@@ -154,7 +124,7 @@ export const editParcel = asyncHandler(async (req, res) => {
   const payload = await formatEditPayload(req.body);
 
   Object.assign(parcel, payload, {
-    updatedBy: null,
+    updatedBy: req.user.username,
   });
 
   await parcel.save();
@@ -181,7 +151,7 @@ export const markParcelOpened = asyncHandler(async (req, res) => {
   parcel.isParcelOpened = true;
   parcel.status = PARCEL_STATUS.OPENED;
   parcel.openedDate = new Date();
-  parcel.updatedBy = null;
+  parcel.updatedBy = req.user.username;
 
   await parcel.save();
 
@@ -190,6 +160,12 @@ export const markParcelOpened = asyncHandler(async (req, res) => {
 });
 
 export const deleteParcel = asyncHandler(async (req, res) => {
+  const isPasswordValid = await bcrypt.compare(req.body.confirmPassword || "", env.deletePasswordHash);
+
+  if (!isPasswordValid) {
+    throw createError("Incorrect password", 401);
+  }
+
   const parcel = await Parcel.findById(req.params.id);
 
   if (!parcel) {
@@ -206,8 +182,8 @@ export const deleteParcel = asyncHandler(async (req, res) => {
 
   parcel.isDeleted = true;
   parcel.deletedAt = new Date();
-  parcel.deletedBy = null;
-  parcel.updatedBy = null;
+  parcel.deletedBy = req.user.username;
+  parcel.updatedBy = req.user.username;
 
   await parcel.save();
 

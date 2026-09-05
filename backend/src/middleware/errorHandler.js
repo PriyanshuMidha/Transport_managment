@@ -12,6 +12,10 @@ export const errorHandler = (error, req, res, next) => {
     return next(error);
   }
 
+  if (statusCode >= 500) {
+    console.error(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} ->`, error);
+  }
+
   return res.status(statusCode).json({
     success: false,
     message: error.message || "Internal server error",

@@ -1,21 +1,33 @@
 import { useEffect, useState } from "react";
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import { getRole, getToken } from "./api/client";
+import { logout } from "./api/auth";
 import { createParcel, markParcelOpened, updateParcel } from "./api/parcels";
 import { createTransport, getTransports } from "./api/transports";
 import { AddTransportModal } from "./components/AddTransportModal";
+import { Toast } from "./components/Toast";
+import { LoginPage } from "./pages/LoginPage";
 import { ParcelEntryPage } from "./pages/ParcelEntryPage";
 import { InStockReportPage } from "./pages/InStockReportPage";
 import { OpenedReportPage } from "./pages/OpenedReportPage";
 
 export default function App() {
+  const [authed, setAuthed] = useState(Boolean(getToken()));
+  const [role, setRoleState] = useState(getRole());
   const [transports, setTransports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [savingParcel, setSavingParcel] = useState(false);
   const [savingTransport, setSavingTransport] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState("");
-  const [submitMessage, setSubmitMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState("");
+
+  const handleLogout = () => {
+    logout();
+    setAuthed(false);
+    setRoleState(null);
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -26,14 +38,19 @@ export default function App() {
       setTransports(transportData);
     } catch (loadError) {
       setError(loadError.message);
+      if (!getToken()) {
+        setAuthed(false);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (authed) {
+      loadData();
+    }
+  }, [authed]);
 
   const handleCreateTransport = async (name) => {
     setSavingTransport(true);
@@ -49,11 +66,10 @@ export default function App() {
 
   const handleCreateParcel = async (payload) => {
     setSavingParcel(true);
-    setSubmitMessage("");
 
     try {
       await createParcel(payload);
-      setSubmitMessage("Parcel saved successfully");
+      setToastMessage("Parcel saved successfully");
     } finally {
       setSavingParcel(false);
     }
@@ -87,6 +103,17 @@ export default function App() {
     }
   };
 
+  if (!authed) {
+    return (
+      <LoginPage
+        onLoginSuccess={() => {
+          setAuthed(true);
+          setRoleState(getRole());
+        }}
+      />
+    );
+  }
+
   return (
     <>
       <div className="app-shell">
@@ -109,6 +136,9 @@ export default function App() {
               <NavLink to="/opened-report" className={({ isActive }) => `nav-tab ${isActive ? "active" : ""}`}>
                 Opened Report
               </NavLink>
+              <button type="button" className="ghost-button" onClick={handleLogout}>
+                Log out
+              </button>
             </nav>
           </div>
         </header>
@@ -126,7 +156,6 @@ export default function App() {
                   onSubmit={handleCreateParcel}
                   onAddTransportClick={() => setModalOpen(true)}
                   loading={savingParcel}
-                  submitMessage={submitMessage}
                 />
               }
             />
@@ -142,7 +171,7 @@ export default function App() {
                 />
               }
             />
-            <Route path="/opened-report" element={<OpenedReportPage />} />
+            <Route path="/opened-report" element={<OpenedReportPage canDelete={role === "admin"} />} />
             <Route path="/reports" element={<Navigate to="/in-stock-report" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -155,6 +184,8 @@ export default function App() {
         onSubmit={handleCreateTransport}
         loading={savingTransport}
       />
+
+      <Toast message={toastMessage} onDismiss={() => setToastMessage("")} />
     </>
   );
 }

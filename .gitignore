@@ -4,3 +4,6 @@ dist
 .env
 backend/.env
 frontend/.env
+frontend/.env.production
+frontend/android
+.vitest

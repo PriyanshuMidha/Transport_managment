@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   font-family: "DM Sans", "Segoe UI", sans-serif;
   color: #10221f;
   background:
@@ -183,6 +184,86 @@ svg {
 
 .search-field {
   flex: 1 1 320px;
+}
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 34, 31, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #10221f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.custom-select-trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.custom-select-placeholder {
+  color: rgba(16, 34, 31, 0.45);
+}
+
+.custom-select-caret {
+  color: var(--ink-soft);
+}
+
+.custom-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(16, 34, 31, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(16, 34, 31, 0.16);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.custom-select-option {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 0;
+  background: transparent;
+  color: #10221f;
+  cursor: pointer;
+  font: inherit;
+}
+
+.custom-select-option:hover,
+.custom-select-option:focus-visible {
+  background: rgba(14, 107, 92, 0.1);
+}
+
+.custom-select-option.selected {
+  background: var(--accent);
+  color: #fff;
+}
+
+.custom-select-add {
+  color: var(--accent-dark);
+  font-weight: 700;
+  border-top: 1px solid rgba(16, 34, 31, 0.08);
+  margin-top: 4px;
+  border-radius: 0 0 10px 10px;
 }
 
 .form-actions,
@@ -380,6 +461,38 @@ th {
   gap: 12px;
 }
 
+.report-card-preview {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.report-card-subline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.report-card-chevron {
+  color: var(--accent-dark);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.report-card-item.expanded {
+  background: rgba(255, 255, 255, 0.92);
+}
+
 .report-card-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -397,6 +510,23 @@ th {
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-dark);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 12px 28px rgba(10, 26, 24, 0.24);
+  z-index: 40;
+  max-width: calc(100vw - 32px);
+  text-align: center;
 }
 
 .modal-backdrop {

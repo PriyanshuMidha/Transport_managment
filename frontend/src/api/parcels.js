@@ -42,7 +42,7 @@ export const updateParcel = async (parcelId, payload) => {
   return response.data;
 };
 
-export const deleteParcel = async (parcelId) => {
-  const response = await apiClient.delete(`/parcels/${parcelId}`);
+export const deleteParcel = async (parcelId, confirmPassword) => {
+  const response = await apiClient.delete(`/parcels/${parcelId}`, { confirmPassword });
   return response.data;
 };

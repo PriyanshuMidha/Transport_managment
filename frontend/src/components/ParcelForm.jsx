@@ -28,7 +28,6 @@ export const ParcelForm = ({
   onSubmit,
   onAddTransportClick,
   loading,
-  submitMessage,
   initialValues,
   formTitle = "Create parcel record",
   formEyebrow = "Parcel Entry",
@@ -91,7 +90,6 @@ export const ParcelForm = ({
           <p className="eyebrow">{formEyebrow}</p>
           <h2>{formTitle}</h2>
         </div>
-        {submitMessage ? <span className="success-pill">{submitMessage}</span> : null}
       </div>
 
       <div className="form-grid">
