@@ -1,0 +1,11 @@
+services:
+  - type: cron
+    name: keep-alive-ping
+    runtime: node
+    plan: free
+    buildCommand: "cd backend && npm install --omit=dev"
+    startCommand: "node backend/scripts/keepAlive.js"
+    schedule: "0 0 */26 * *"
+    envVars:
+      - key: APP_URL
+        sync: false
